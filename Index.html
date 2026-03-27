@@ -95,12 +95,10 @@
   </div>
 </div>
 
-<!-- Firebase Script -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getDatabase, ref, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-  // 🔑 Ajoute tes informations Firebase ici
   const firebaseConfig = {
     apiKey: "AIzaSyA2XO5lhKHI5ljOhm0WyA7HsJnTF_o1KTw",
     authDomain: "hivemynd-cc260.firebaseapp.com",
@@ -111,7 +109,6 @@
     appId: "1:79451616370:web:8a841b3dcf257fff92feeb"
   };
 
-  // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
   const votesRef = ref(db, "votes");
@@ -119,7 +116,6 @@
   let votes = [0,0,0,0];
   let hasVoted = false;
 
-  // 🔄 écouter en temps réel
   onValue(votesRef, (snapshot) => {
     const data = snapshot.val();
     if (data) {
@@ -174,7 +170,7 @@
     }
   }
 
-  // 🔒 désactiver les boutons après le vote
+  // 🔒 désactiver boutons après vote
   function disableButtons() {
     for (let i = 0; i < 4; i++) {
       document.getElementById("btn" + i).classList.add("disabled");
