@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Vote Live Demo</title>
+  <title>HyveMYnd</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <style>
@@ -95,102 +95,91 @@
   </div>
 </div>
 
-<script>
-const API_URL = "https://api.jsonbin.io/v3/b/YOUR_BIN_ID";
-const API_KEY = "YOUR_API_KEY";
+<!-- Firebase Script -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getDatabase, ref, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-let votes = [0,0,0,0];
-let hasVoted = false;
+  // 🔑 Ajoute tes informations Firebase ici
+  const firebaseConfig = {
+    apiKey: "AIzaSyA2XO5lhKHI5ljOhm0WyA7HsJnTF_o1KTw",
+    authDomain: "hivemynd-cc260.firebaseapp.com",
+    databaseURL: "https://hivemynd-cc260-default-rtdb.firebaseio.com/",
+    projectId: "hivemynd-cc260",
+    storageBucket: "hivemynd-cc260.firebasestorage.app",
+    messagingSenderId: "79451616370",
+    appId: "1:79451616370:web:8a841b3dcf257fff92feeb"
+  };
 
-// 🎯 animation fluide
-function animateValue(element, start, end) {
-  let range = end - start;
-  let step = range / 10;
-  let current = start;
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  const votesRef = ref(db, "votes");
 
-  let interval = setInterval(() => {
-    current += step;
-    element.innerText = current.toFixed(1) + "%";
+  let votes = [0,0,0,0];
+  let hasVoted = false;
 
-    if ((step > 0 && current >= end) || (step < 0 && current <= end)) {
-      element.innerText = end.toFixed(1) + "%";
-      clearInterval(interval);
+  // 🔄 écouter en temps réel
+  onValue(votesRef, (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+      votes = data;
+      updateUI();
     }
-  }, 30);
-}
-
-// 🔄 charger votes
-async function loadVotes() {
-  try {
-    const res = await fetch(API_URL, {
-      headers: { "X-Master-Key": API_KEY }
-    });
-
-    const data = await res.json();
-    votes = data.record.votes;
-
-    updateUI();
-  } catch(e) {
-    console.log("Erreur API");
-  }
-}
-
-// 🗳️ voter
-async function vote(index) {
-  if (hasVoted) return;
-
-  votes[index]++;
-  hasVoted = true;
-
-  await fetch(API_URL, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Master-Key": API_KEY
-    },
-    body: JSON.stringify({ votes })
   });
 
-  disableButtons();
-  updateUI();
-}
+  // 🗳️ fonction de vote
+  window.vote = function(index) {
+    if (hasVoted) return;
 
-// 🎨 UI
-function updateUI() {
-  let total = votes.reduce((a,b)=>a+b,0);
-  let max = Math.max(...votes);
+    hasVoted = true;
+    localStorage.setItem("voted", "true");
 
-  document.getElementById("users").innerText = "👤 " + total + " votants";
+    runTransaction(votesRef, (currentVotes) => {
+      if (currentVotes === null) {
+        return [0,0,0,0];
+      }
 
-  for (let i=0;i<4;i++) {
-    let percent = total===0 ? 0 : (votes[i]/total)*100;
+      currentVotes[index]++;
+      return currentVotes;
+    });
 
-    let el = document.getElementById("p"+i);
-    let current = parseFloat(el.innerText) || 0;
+    disableButtons();
+  };
 
-    animateValue(el, current, percent);
+  // 🔒 vérifier si déjà voté
+  if (localStorage.getItem("voted")) {
+    hasVoted = true;
+    disableButtons();
+  }
 
-    let btn = document.getElementById("btn"+i);
-    btn.classList.remove("winner");
+  // 🎨 UI
+  function updateUI() {
+    let total = votes.reduce((a, b) => a + b, 0);
+    let max = Math.max(...votes);
 
-    if (votes[i] === max && max > 0) {
-      btn.classList.add("winner");
+    document.getElementById("users").innerText = "👤 " + total + " votants";
+
+    for (let i = 0; i < 4; i++) {
+      let percent = total === 0 ? 0 : (votes[i] / total) * 100;
+
+      document.getElementById("p" + i).innerText = percent.toFixed(1) + "%";
+
+      let btn = document.getElementById("btn" + i);
+      btn.classList.remove("winner");
+
+      if (votes[i] === max && max > 0) {
+        btn.classList.add("winner");
+      }
     }
   }
-}
 
-// 🔒 disable après vote
-function disableButtons() {
-  for (let i=0;i<4;i++) {
-    document.getElementById("btn"+i).classList.add("disabled");
+  // 🔒 désactiver les boutons après le vote
+  function disableButtons() {
+    for (let i = 0; i < 4; i++) {
+      document.getElementById("btn" + i).classList.add("disabled");
+    }
   }
-}
-
-// 🔁 refresh auto (illusion live)
-setInterval(loadVotes, 1500);
-
-// init
-loadVotes();
 </script>
 
 </body>
