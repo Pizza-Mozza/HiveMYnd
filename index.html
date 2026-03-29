@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HiveMynd</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
@@ -49,9 +50,12 @@
       border-radius: 12px;
       padding: 20px;
       margin: 15px auto;
-      max-width: 80%; 
-      width: 500px; 
+      max-width: 80%;
+      width: 500px;
       color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .poll-header {
@@ -59,13 +63,13 @@
       font-weight: bold;
       margin-bottom: 10px;
       display: flex;
-      align-items: center; 
+      align-items: center;
     }
 
     .poll-icon {
-      width: 30px; 
-      height: auto; 
-      margin-right: 10px; 
+      width: 30px;
+      height: auto;
+      margin-right: 10px;
     }
 
     .vote-btn {
@@ -105,6 +109,7 @@
       z-index: 0;
       border-radius: 6px;
       transition: width 0.5s ease;
+      display: none; 
     }
 
     .vote-text {
@@ -139,7 +144,7 @@
     }
 
     .hidden-poll {
-      display: none; 
+      display: none;
     }
 
     /* Footer */
@@ -148,8 +153,35 @@
       color: white;
       text-align: center;
       padding: 20px;
-      margin-top: auto; 
+      margin-top: auto;
       font-size: 1rem;
+    }
+
+    /* Media Queries */
+    @media (max-width: 600px) {
+      .main-container {
+        padding: 10px;
+      }
+
+      .poll-section {
+        padding: 15px;
+      }
+
+      .site-header img {
+        width: 30px;
+      }
+
+      .vote-btn {
+        padding: 8px 10px;
+      }
+
+      .poll-header {
+        font-size: 1rem;
+      }
+
+      .site-title {
+        font-size: 1.5rem;
+      }
     }
   </style>
 </head>
@@ -167,9 +199,9 @@
         <img src="https://upload.wikimedia.org/wikipedia/commons/8/83/Alv%C3%A9ole_d%27abeille.svg" class="poll-icon" alt="icone abeille">
         Quel logo garde-t-on ?
       </div>
-      <button class="vote-btn" data-index="0"><div class="vote-fill"></div><div class="vote-text"><span>Le premier Logo !</span><span class="percent">0%</span></div></button>
-      <button class="vote-btn" data-index="1"><div class="vote-fill"></div><div class="vote-text"><span>Le deuxième Logo !</span><span class="percent">0%</span></div></button>
-      <button class="vote-btn" data-index="2"><div class="vote-fill"></div><div class="vote-text"><span>Aucun des deux, ils sont moches...</span><span class="percent">0%</span></div></button>
+      <button class="vote-btn" data-index="0"><div class="vote-fill"></div><div class="vote-text"><span>Le premier Logo !</span><span class="percent" style="display: none;">0%</span></div></button>
+      <button class="vote-btn" data-index="1"><div class="vote-fill"></div><div class="vote-text"><span>Le deuxième Logo !</span><span class="percent" style="display: none;">0%</span></div></button>
+      <button class="vote-btn" data-index="2"><div class="vote-fill"></div><div class="vote-text"><span>Aucun des deux, ils sont moches...</span><span class="percent" style="display: none;">0%</span></div></button>
       <div class="users">👤 0 votants</div>
     </div>
 
@@ -178,12 +210,12 @@
     <div class="poll-section hidden-poll" data-poll-id="poll2" id="poll2">
       <div class="poll-header">
         <img src="https://upload.wikimedia.org/wikipedia/commons/8/83/Alv%C3%A9ole_d%27abeille.svg" class="poll-icon" alt="icone abeille">
-        Est ce que Arthur sors de la salle ?
+        Est-ce que Arthur sort de la salle ?
       </div>
-      <button class="vote-btn" data-index="0"><div class="vote-fill"></div><div class="vote-text"><span>OUI !</span><span class="percent">0%</span></div></button>
-      <button class="vote-btn" data-index="1"><div class="vote-fill"></div><div class="vote-text"><span>Non</span><span class="percent">0%</span></div></button>
-      <button class="vote-btn" data-index="2"><div class="vote-fill"></div><div class="vote-text"><span>Qu'il parte le plus loin possible ce goujat</span><span class="percent">0%</span></div></button>
-      <button class="vote-btn" data-index="3"><div class="vote-fill"></div><div class="vote-text"><span>La réponse D</span><span class="percent">0%</span></div></button>
+      <button class="vote-btn" data-index="0"><div class="vote-fill"></div><div class="vote-text"><span>OUI !</span><span class="percent" style="display: none;">0%</span></div></button>
+      <button class="vote-btn" data-index="1"><div class="vote-fill"></div><div class="vote-text"><span>Non</span><span class="percent" style="display: none;">0%</span></div></button>
+      <button class="vote-btn" data-index="2"><div class="vote-fill"></div><div class="vote-text"><span>Qu'il parte le plus loin possible ce goujat</span><span class="percent" style="display: none;">0%</span></div></button>
+      <button class="vote-btn" data-index="3"><div class="vote-fill"></div><div class="vote-text"><span>La réponse D</span><span class="percent" style="display: none;">0%</span></div></button>
       <div class="users">👤 0 votants</div>
     </div>
   </div>
@@ -212,20 +244,18 @@
 
     const pollSections = document.querySelectorAll(".poll-section");
 
-    // Fonction pour afficher ou cacher le sondage caché lorsqu'on clique sur le bouton
     const showPollBtn = document.getElementById("showPollBtn");
     const hiddenPoll = document.getElementById("poll2");
-    
-    let isPollVisible = false; // Indicateur pour savoir si le sondage est visible ou caché
+
+    let isPollVisible = false;
 
     showPollBtn.addEventListener("click", () => {
-      isPollVisible = !isPollVisible; // Bascule l'état de visibilité
+      isPollVisible = !isPollVisible; 
       if (isPollVisible) {
-        hiddenPoll.style.display = "block"; // Afficher le sondage caché
-        showPollBtn.innerText = "Cacher le sondage"; // Change le texte du bouton
-      } else {
-        hiddenPoll.style.display = "none"; // Cacher le sondage
-        showPollBtn.innerText = "Voir le sondage caché"; // Rétablir le texte du bouton
+        hiddenPoll.style.display = "block"; 
+        showPollBtn.innerText = "Cacher le sondage"; 
+        hiddenPoll.style.display = "none"; 
+        showPollBtn.innerText = "Voir le sondage caché"; 
       }
     });
 
@@ -272,10 +302,19 @@
 
         votes.forEach((v, i) => {
           const percent = total === 0 ? 0 : (v / total) * 100;
-          percentElems[i].innerText = percent.toFixed(1) + "%";
           const fill = buttons[i].querySelector(".vote-fill");
-          fill.style.width = percent + "%";
+          const percentElem = percentElems[i];
 
+          if (hasVoted) {
+            fill.style.display = "block"; 
+            percentElem.style.display = "inline"; 
+            percentElem.innerText = percent.toFixed(1) + "%"; 
+          } else {
+            fill.style.display = "none"; 
+            percentElem.style.display = "none";
+          }
+
+          fill.style.width = percent + "%";
           buttons[i].classList.remove("winner");
           if (v === max && max > 0) buttons[i].classList.add("winner");
         });
