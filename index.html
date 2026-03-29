@@ -143,8 +143,17 @@
       text-align: center;
     }
 
+    /* Animation pour le sondage caché */
     .hidden-poll {
-      display: none;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease, opacity 0.5s ease;
+    }
+
+    .hidden-poll.show {
+      max-height: 1000px;
+      opacity: 1;
     }
 
     /* Footer */
@@ -250,12 +259,13 @@
     let isPollVisible = false;
 
     showPollBtn.addEventListener("click", () => {
-      isPollVisible = !isPollVisible; 
+      isPollVisible = !isPollVisible;
       if (isPollVisible) {
-        hiddenPoll.style.display = "block"; 
-        showPollBtn.innerText = "Cacher le sondage"; 
-        hiddenPoll.style.display = "none"; 
-        showPollBtn.innerText = "Voir le sondage caché"; 
+        hiddenPoll.classList.add("show");
+        showPollBtn.innerText = "Cacher le sondage";
+      } else {
+        hiddenPoll.classList.remove("show");
+        showPollBtn.innerText = "Voir le sondage caché";
       }
     });
 
