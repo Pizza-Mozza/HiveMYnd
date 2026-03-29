@@ -2,181 +2,289 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>HyveMYnd</title>
+  <title>HiveMynd</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
   <style>
     html, body {
-      height: 100%;
       margin: 0;
-      overflow: hidden;
       font-family: Arial, sans-serif;
-      background: #111;
+      background: #340829;
       color: white;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
     }
 
-    .vote-btn {
-      height: 50vh;
-      font-size: 2.2rem;
+    .main-container {
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      transition: all 0.25s ease;
-      border: none;
+      flex-grow: 1;
+      padding: 20px;
     }
 
-    .vote-btn:hover {
-      transform: scale(1.03);
-      filter: brightness(1.2);
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
     }
 
-    .vote-btn:active {
-      transform: scale(0.96);
+    .site-header img {
+      width: 40px;
+      height: auto;
+      margin: 0 10px;
     }
 
-    .percent {
+    .site-title {
       font-size: 2rem;
       font-weight: bold;
     }
 
-    .winner {
-      box-shadow: inset 0 0 0 6px gold;
+    /* Poll */
+    .poll-section {
+      background: #340829;
+      border: 2px solid #7e6007;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 15px auto;
+      max-width: 80%; 
+      width: 500px; 
+      color: white;
     }
 
-    .disabled {
-      pointer-events: none;
+    .poll-header {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center; 
+    }
+
+    .poll-icon {
+      width: 30px; 
+      height: auto; 
+      margin-right: 10px; 
+    }
+
+    .vote-btn {
+      position: relative;
+      display: block;
+      width: 100%;
+      padding: 10px 15px;
+      margin: 5px 0;
+      font-size: 1.2rem;
+      color: #340829;
+      background: #cfe0e6;
+      border: 2px solid #555;
+      border-radius: 8px;
+      text-align: left;
+      cursor: pointer;
+      overflow: hidden;
+      transition: all 0.25s ease;
+    }
+
+    .vote-btn:hover {
+      filter: brightness(1.2);
+    }
+
+    .vote-btn.disabled {
+      cursor: default;
       opacity: 0.6;
     }
 
-    #users {
-      position: fixed;
-      top: 10px;
-      left: 15px;
+    .vote-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 0%;
+      background: gold;
+      border: 2px solid #555;
+      z-index: 0;
+      border-radius: 6px;
+      transition: width 0.5s ease;
+    }
+
+    .vote-text {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .winner {
+      border-color: gold;
+    }
+
+    .users {
       font-size: 1rem;
       opacity: 0.8;
+      margin-top: 10px;
+    }
+
+    .show-poll-btn {
+      background-color: #7e6007;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin: 15px auto;
+      display: block;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .hidden-poll {
+      display: none; 
+    }
+
+    /* Footer */
+    footer {
+      background-color: #340829;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin-top: auto; 
+      font-size: 1rem;
     }
   </style>
 </head>
-
 <body>
 
-<div id="users">👤 0 votants</div>
-
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-6 p-1">
-      <button id="btn0" class="vote-btn bg-primary w-100" onclick="vote(0)">
-        Choix 1
-        <div class="percent" id="p0">0%</div>
-      </button>
+  <div class="main-container">
+    <div class="site-header">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/8/83/Alv%C3%A9ole_d%27abeille.svg" alt="Logo Gauche">
+      <span class="site-title">HiveMynd</span>
+      <img src="https://upload.wikimedia.org/wikipedia/commons/8/83/Alv%C3%A9ole_d%27abeille.svg" alt="Logo Droite">
     </div>
-    <div class="col-6 p-1">
-      <button id="btn1" class="vote-btn bg-success w-100" onclick="vote(1)">
-        Choix 2
-        <div class="percent" id="p1">0%</div>
-      </button>
+
+    <div class="poll-section" data-poll-id="poll1">
+      <div class="poll-header">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/8/83/Alv%C3%A9ole_d%27abeille.svg" class="poll-icon" alt="icone abeille">
+        Quel logo garde-t-on ?
+      </div>
+      <button class="vote-btn" data-index="0"><div class="vote-fill"></div><div class="vote-text"><span>Le premier Logo !</span><span class="percent">0%</span></div></button>
+      <button class="vote-btn" data-index="1"><div class="vote-fill"></div><div class="vote-text"><span>Le deuxième Logo !</span><span class="percent">0%</span></div></button>
+      <button class="vote-btn" data-index="2"><div class="vote-fill"></div><div class="vote-text"><span>Aucun des deux, ils sont moches...</span><span class="percent">0%</span></div></button>
+      <div class="users">👤 0 votants</div>
+    </div>
+
+    <button class="show-poll-btn" id="showPollBtn">Voir le sondage secret</button>
+
+    <div class="poll-section hidden-poll" data-poll-id="poll2" id="poll2">
+      <div class="poll-header">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/8/83/Alv%C3%A9ole_d%27abeille.svg" class="poll-icon" alt="icone abeille">
+        Est ce que Arthur sors de la salle ?
+      </div>
+      <button class="vote-btn" data-index="0"><div class="vote-fill"></div><div class="vote-text"><span>OUI !</span><span class="percent">0%</span></div></button>
+      <button class="vote-btn" data-index="1"><div class="vote-fill"></div><div class="vote-text"><span>Non</span><span class="percent">0%</span></div></button>
+      <button class="vote-btn" data-index="2"><div class="vote-fill"></div><div class="vote-text"><span>Qu'il parte le plus loin possible ce goujat</span><span class="percent">0%</span></div></button>
+      <button class="vote-btn" data-index="3"><div class="vote-fill"></div><div class="vote-text"><span>La réponse D</span><span class="percent">0%</span></div></button>
+      <div class="users">👤 0 votants</div>
     </div>
   </div>
 
-  <div class="row">
-    <div class="col-6 p-1">
-      <button id="btn2" class="vote-btn bg-warning w-100" onclick="vote(2)">
-        Choix 3
-        <div class="percent" id="p2">0%</div>
-      </button>
-    </div>
-    <div class="col-6 p-1">
-      <button id="btn3" class="vote-btn bg-danger w-100" onclick="vote(3)">
-        Choix 4
-        <div class="percent" id="p3">0%</div>
-      </button>
-    </div>
-  </div>
-</div>
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2026 HiveMynd. Tous droits réservés.</p>
+  </footer>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyA2XO5lhKHI5ljOhm0WyA7HsJnTF_o1KTw",
-    authDomain: "hivemynd-cc260.firebaseapp.com",
-    databaseURL: "https://hivemynd-cc260-default-rtdb.firebaseio.com/",
-    projectId: "hivemynd-cc260",
-    storageBucket: "hivemynd-cc260.firebasestorage.app",
-    messagingSenderId: "79451616370",
-    appId: "1:79451616370:web:8a841b3dcf257fff92feeb"
-  };
+    const firebaseConfig = {
+      apiKey: "AIzaSyA2XO5lhKHI5ljOhm0WyA7HsJnTF_o1KTw",
+      authDomain: "hivemynd-cc260.firebaseapp.com",
+      databaseURL: "https://hivemynd-cc260-default-rtdb.firebaseio.com/",
+      projectId: "hivemynd-cc260",
+      storageBucket: "hivemynd-cc260.firebasestorage.app",
+      messagingSenderId: "79451616370",
+      appId: "1:79451616370:web:8a841b3dcf257fff92feeb"
+    };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-  const votesRef = ref(db, "votes");
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-  let votes = [0,0,0,0];
-  let hasVoted = false;
+    const pollSections = document.querySelectorAll(".poll-section");
 
-  onValue(votesRef, (snapshot) => {
-    const data = snapshot.val();
-    if (data) {
-      votes = data;
-      updateUI();
-    }
-  });
+    // Fonction pour afficher ou cacher le sondage caché lorsqu'on clique sur le bouton
+    const showPollBtn = document.getElementById("showPollBtn");
+    const hiddenPoll = document.getElementById("poll2");
+    
+    let isPollVisible = false; // Indicateur pour savoir si le sondage est visible ou caché
 
-  // 🗳️ fonction de vote
-  window.vote = function(index) {
-    if (hasVoted) return;
-
-    hasVoted = true;
-    localStorage.setItem("voted", "true");
-
-    runTransaction(votesRef, (currentVotes) => {
-      if (currentVotes === null) {
-        return [0,0,0,0];
+    showPollBtn.addEventListener("click", () => {
+      isPollVisible = !isPollVisible; // Bascule l'état de visibilité
+      if (isPollVisible) {
+        hiddenPoll.style.display = "block"; // Afficher le sondage caché
+        showPollBtn.innerText = "Cacher le sondage"; // Change le texte du bouton
+      } else {
+        hiddenPoll.style.display = "none"; // Cacher le sondage
+        showPollBtn.innerText = "Voir le sondage caché"; // Rétablir le texte du bouton
       }
-
-      currentVotes[index]++;
-      return currentVotes;
     });
 
-    disableButtons();
-  };
+    pollSections.forEach(section => {
+      const pollId = section.dataset.pollId;
+      const votesRef = ref(db, "votes/" + pollId);
+      let votes = [0,0,0,0];
+      let hasVoted = localStorage.getItem("voted_" + pollId) === "true";
 
-  // 🔒 vérifier si déjà voté
-  if (localStorage.getItem("voted")) {
-    hasVoted = true;
-    disableButtons();
-  }
+      const buttons = section.querySelectorAll(".vote-btn");
+      const percentElems = section.querySelectorAll(".percent");
+      const usersElem = section.querySelector(".users");
 
-  // 🎨 UI
-  function updateUI() {
-    let total = votes.reduce((a, b) => a + b, 0);
-    let max = Math.max(...votes);
+      onValue(votesRef, snapshot => {
+        const data = snapshot.val();
+        if (data) votes = data;
+        updateUI();
+      });
 
-    document.getElementById("users").innerText = "👤 " + total + " votants";
+      buttons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          if (hasVoted) return;
+          const index = parseInt(btn.dataset.index);
 
-    for (let i = 0; i < 4; i++) {
-      let percent = total === 0 ? 0 : (votes[i] / total) * 100;
+          hasVoted = true;
+          localStorage.setItem("voted_" + pollId, "true");
 
-      document.getElementById("p" + i).innerText = percent.toFixed(1) + "%";
+          runTransaction(votesRef, currentVotes => {
+            if (!Array.isArray(currentVotes) || currentVotes.length !== 4) currentVotes = [0,0,0,0];
+            currentVotes[index]++;
+            return currentVotes;
+          });
 
-      let btn = document.getElementById("btn" + i);
-      btn.classList.remove("winner");
+          disableButtons();
+        });
+      });
 
-      if (votes[i] === max && max > 0) {
-        btn.classList.add("winner");
+      if (hasVoted) disableButtons();
+
+      function updateUI() {
+        const total = votes.reduce((a,b) => a+b, 0);
+        const max = Math.max(...votes);
+        usersElem.innerText = "👤 " + total + " votants";
+
+        votes.forEach((v, i) => {
+          const percent = total === 0 ? 0 : (v / total) * 100;
+          percentElems[i].innerText = percent.toFixed(1) + "%";
+          const fill = buttons[i].querySelector(".vote-fill");
+          fill.style.width = percent + "%";
+
+          buttons[i].classList.remove("winner");
+          if (v === max && max > 0) buttons[i].classList.add("winner");
+        });
       }
-    }
-  }
 
-  // 🔒 désactiver boutons après vote
-  function disableButtons() {
-    for (let i = 0; i < 4; i++) {
-      document.getElementById("btn" + i).classList.add("disabled");
-    }
-  }
-</script>
-
+      function disableButtons() {
+        buttons.forEach(btn => btn.classList.add("disabled"));
+      }
+    });
+  </script>
 </body>
 </html>
